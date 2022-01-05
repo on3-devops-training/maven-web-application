@@ -1,0 +1,28 @@
+node
+{
+    def mavenHome = tool name: "maven-3.8.4"
+    
+    stage('CheckoutCode')
+    {
+        git branch: 'development', credentialsId: '4a19db57-8af6-49b0-bc83-f8f800b9db6f', url: 'https://github.com/on3-devops-training/maven-web-application.git'
+    }
+
+    stage('Build')
+    {
+        
+        sh "${mavenHome}/bin/mvn clean package"
+    }
+    
+    stage('ExecuteSonarQubeReport')
+    {
+        sh "${mavenHome}/bin/mvn sonar:sonar"
+    }
+    
+    stage('uploadArtifactToNexus')
+    {
+        sh "${mavenHome}/bin/mvn deploy"
+    }
+    
+    mavenHome="/var/lib/jenkins/tools/hudson.tasks.Maven_MavenInstallation/maven-3.8.4"
+    
+}
